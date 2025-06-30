@@ -173,7 +173,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      TickBox(Orange)_0: 7019164136548010057
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
