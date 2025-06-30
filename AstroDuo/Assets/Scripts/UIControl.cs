@@ -9,12 +9,20 @@ public class UIControl : MonoBehaviour
 
     public void ToSetting()
     {
+        // Play button-click sound here
         SceneManager.LoadScene(GameConst.SETTING_SCENE); 
     }
 
     public void ToSelectSkin()
     {
+        // Play button-click sound here
         SceneManager.LoadScene(GameConst.SELECT_SKIN_SCENE);
+    }
+    
+    public void ToPlayScene()
+    {
+        // Play button-click sound here
+        SceneManager.LoadScene(GameConst.SAMPLE_SKIN_SCENE);
     }
 
     public void OnButtonHoverEnter(RectTransform targetRectTransform)
