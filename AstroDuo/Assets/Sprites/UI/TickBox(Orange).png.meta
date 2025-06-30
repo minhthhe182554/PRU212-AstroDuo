@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: d83f52b5c4cca584b86d0cb022c80dde
+guid: e4d29b39f12353f4c831ca3628f23ed3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -198938125430884413
-    second: Menu_0
-  - first:
-      213: -1909268238846872576
-    second: Menu_1
+      213: 7019164136548010057
+    second: TickBox(Orange)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -142,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Menu_0
+      name: TickBox(Orange)_0
       rect:
         serializedVersion: 2
-        x: 239
-        y: 511
-        width: 546
-        height: 162
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -157,30 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3c7f86534da3d3df0800000000000000
-      internalID: -198938125430884413
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Menu_1
-      rect:
-        serializedVersion: 2
-        x: 207
-        y: 335
-        width: 674
-        height: 162
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 004b89a07aae085e0800000000000000
-      internalID: -1909268238846872576
+      spriteID: 9480b13d794196160800000000000000
+      internalID: 7019164136548010057
       vertices: []
       indices: 
       edges: []
@@ -198,9 +173,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Menu_0: -198938125430884413
-      Menu_1: -1909268238846872576
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

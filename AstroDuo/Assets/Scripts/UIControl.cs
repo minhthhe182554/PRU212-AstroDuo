@@ -9,7 +9,7 @@ public class UIControl : MonoBehaviour
 
     public void ToSetting()
     {
-        SceneManager.LoadScene(GameConst.SETTING_SCENE);
+        SceneManager.LoadScene(GameConst.SETTING_SCENE); 
     }
 
     public void ToSelectSkin()
@@ -31,5 +31,11 @@ public class UIControl : MonoBehaviour
         {
             targetRectTransform.localScale = Vector3.one; // return default scale
         }
+    }
+
+    public void OnToggleValueChanged()
+    {
+        //Play toggle on/off sound here
+        Debug.Log("value changed");
     }
 }
