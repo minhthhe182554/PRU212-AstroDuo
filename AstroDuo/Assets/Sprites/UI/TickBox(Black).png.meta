@@ -173,7 +173,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      TickBox(Black)_0: 5435791064764769687
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

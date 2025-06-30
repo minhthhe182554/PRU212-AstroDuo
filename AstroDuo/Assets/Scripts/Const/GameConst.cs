@@ -6,4 +6,5 @@ public static class GameConst
     public const string SETTING_SCENE = "SettingScene";
     public const string MAIN_SCENE = "MainScene";
     public const string SELECT_SKIN_SCENE = "SelectSkinScene";
+    public const string SAMPLE_SKIN_SCENE = "SampleScene";
 }

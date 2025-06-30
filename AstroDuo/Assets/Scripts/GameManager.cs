@@ -15,6 +15,10 @@ public class GameManager : MonoBehaviour
     public bool StartingPowerUps { get; set; } = false;
     public bool Sounds { get; set; } = true;
 
+    [Header("Skins")]
+    public SpriteRenderer Player1Skin { get; set; }
+    public SpriteRenderer Player2Skin { get; set; }
+
     void Start()
     {
         if (Instance == null)
