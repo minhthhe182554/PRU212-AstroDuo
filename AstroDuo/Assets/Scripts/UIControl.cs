@@ -46,4 +46,35 @@ public class UIControl : MonoBehaviour
         //Play toggle on/off sound here
         Debug.Log("value changed");
     }
+
+    public void RandomizeSkins()
+    {
+        // Play button-click sound here
+        
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RandomizeSkins();
+            
+            // Update SkinManager UI nếu có trong scene
+            SkinManager skinManager = FindFirstObjectByType<SkinManager>();
+            if (skinManager != null)
+            {
+                skinManager.UpdateSkinDisplay(); // Đảm bảo UI được update
+            }
+        }
+        else
+        {
+            Debug.LogError("GameManager Instance not found!");
+        }
+    }
+
+    // Thêm method để force update UI (có thể assign cho button để test)
+    public void ForceUpdateSkinDisplay()
+    {
+        SkinManager skinManager = FindFirstObjectByType<SkinManager>();
+        if (skinManager != null)
+        {
+            skinManager.ForceUpdateDisplay();
+        }
+    }
 }
