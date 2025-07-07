@@ -44,6 +44,7 @@ public class UIControl : MonoBehaviour
     public void OnToggleValueChanged()
     {
         //Play toggle on/off sound here
+        
         Debug.Log("value changed");
     }
 
@@ -55,26 +56,16 @@ public class UIControl : MonoBehaviour
         {
             GameManager.Instance.RandomizeSkins();
             
-            // Update SkinManager UI nếu có trong scene
+            // Update UI in SelectSkinScene
             SkinManager skinManager = FindFirstObjectByType<SkinManager>();
             if (skinManager != null)
             {
-                skinManager.UpdateSkinDisplay(); // Đảm bảo UI được update
+                skinManager.UpdateSkinDisplay(); 
             }
         }
         else
         {
             Debug.LogError("GameManager Instance not found!");
-        }
-    }
-
-    // Thêm method để force update UI (có thể assign cho button để test)
-    public void ForceUpdateSkinDisplay()
-    {
-        SkinManager skinManager = FindFirstObjectByType<SkinManager>();
-        if (skinManager != null)
-        {
-            skinManager.ForceUpdateDisplay();
         }
     }
 }

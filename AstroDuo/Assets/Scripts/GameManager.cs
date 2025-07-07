@@ -20,13 +20,13 @@ public class GameManager : MonoBehaviour
     public SpriteRenderer Player2Skin { get; set; }
 
     [Header("Available Skins")]
-    [SerializeField] private Sprite[] availableSkins; // Assign trong Inspector với tất cả sprites từ Ships(Bordered)
+    [SerializeField] private Sprite[] availableSkins; 
     
     [Header("Current Selected Skins")]
     public Sprite Player1CurrentSkin { get; private set; }
     public Sprite Player2CurrentSkin { get; private set; }
 
-    void Awake() // Đổi từ Start() sang Awake() để chạy sớm hơn
+    void Awake() 
     {
         if (Instance == null)
         {
@@ -124,33 +124,33 @@ public class GameManager : MonoBehaviour
     {
         if (newSkin == null)
         {
-            Debug.LogError("Skin không thể null!");
+            Debug.LogError("Skin is null");
             return;
         }
 
         if (playerNumber == 1)
         {
-            // Đảm bảo không trùng với player 2
+            // Ensure 2 player has 2 different skins
             if (newSkin != Player2CurrentSkin)
             {
                 Player1CurrentSkin = newSkin;
             }
             else
             {
-                Debug.LogWarning("Không thể set skin trùng với Player 2!");
+                Debug.LogWarning("Same skins");
                 return;
             }
         }
         else if (playerNumber == 2)
         {
-            // Đảm bảo không trùng với player 1
+            // Ensure 2 player has 2 different skins
             if (newSkin != Player1CurrentSkin)
             {
                 Player2CurrentSkin = newSkin;
             }
             else
             {
-                Debug.LogWarning("Không thể set skin trùng với Player 1!");
+                Debug.LogWarning("Same skins");
                 return;
             }
         }
@@ -164,7 +164,7 @@ public class GameManager : MonoBehaviour
         Player1Skin = player1Renderer;
         Player2Skin = player2Renderer;
         
-        // Apply current skins ngay lập tức
+        // Apply current skins to Players in other scenes
         ApplySkinsToRenderers();
         
         Debug.Log("[GameManager] Player skin renderers registered and skins applied.");
