@@ -3,13 +3,13 @@ using UnityEngine;
 public class SkinRegister : MonoBehaviour
 {
 
-    [Header("Player Sprite Renderers")]
+    [Header("Player Sprite Renderers")] 
     [SerializeField] private SpriteRenderer player1Renderer;
     [SerializeField] private SpriteRenderer player2Renderer;
     
     [Header("Auto Find Settings")]
-    [SerializeField] private string player1ObjectName = "P1";
-    [SerializeField] private string player2ObjectName = "P2";
+    [SerializeField] private string player1ObjectName = "P1_Jet";
+    [SerializeField] private string player2ObjectName = "P2_Jet";
     
     void Start()
     {
