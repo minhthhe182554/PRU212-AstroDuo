@@ -1,25 +1,40 @@
 fileFormatVersion: 2
-guid: 93856c82ad5cbdc4a96e62e14b3891f3
+guid: 9643af2f45636e844ba78f38fb4e4833
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1822851176547488934
-    second: Ships(Bordered)_0
+      213: 6887728795132578350
+    second: Block(Map1)_0
   - first:
-      213: -5829077949677762714
-    second: Ships(Bordered)_1
+      213: -1750496329066103757
+    second: Block(Map1)_1
   - first:
-      213: -5720193251572854745
-    second: Ships(Bordered)_2
+      213: -711872244100331378
+    second: Block(Map1)_2
   - first:
-      213: -260211707230018455
-    second: Ships(Bordered)_3
+      213: 2342177056994935492
+    second: Block(Map1)_3
   - first:
-      213: -8349918657026678835
-    second: Ships(Bordered)_4
+      213: -7752516953758990665
+    second: Block(Map1)_4
   - first:
-      213: 122608806077873892
-    second: Ships(Bordered)_5
+      213: -7911088523819961774
+    second: Block(Map1)_5
+  - first:
+      213: 3205305411371647358
+    second: Block(Map1)_6
+  - first:
+      213: -1725235880103487586
+    second: Block(Map1)_7
+  - first:
+      213: -2825041489832184997
+    second: Block(Map1)_8
+  - first:
+      213: 1210186614072921762
+    second: Block(Map1)_9
+  - first:
+      213: 4893252847546637588
+    second: Block(Map1)_10
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -66,7 +81,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 400
+  spritePixelsToUnits: 514
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -154,133 +169,221 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Ships(Bordered)_0
+      name: Block(Map1)_0
       rect:
         serializedVersion: 2
-        x: 111
-        y: 1183
-        width: 546
-        height: 546
+        x: 127
+        y: 1407
+        width: 514
+        height: 514
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a5beb77438ee3b6e0800000000000000
-      internalID: -1822851176547488934
+      spriteID: e2a4b1fa8d0269f50800000000000000
+      internalID: 6887728795132578350
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ships(Bordered)_1
+      name: Block(Map1)_1
       rect:
         serializedVersion: 2
-        x: 751
-        y: 1183
-        width: 546
-        height: 546
+        x: 895
+        y: 1407
+        width: 514
+        height: 514
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 66705611d74fa1fa0800000000000000
-      internalID: -5829077949677762714
+      spriteID: 33cb36dfcdcf4b7e0800000000000000
+      internalID: -1750496329066103757
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ships(Bordered)_2
+      name: Block(Map1)_2
       rect:
         serializedVersion: 2
-        x: 1391
-        y: 1183
-        width: 546
-        height: 546
+        x: 1663
+        y: 1407
+        width: 514
+        height: 514
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 720d9696b8acd90b0800000000000000
-      internalID: -5720193251572854745
+      spriteID: e8880f437fbee16f0800000000000000
+      internalID: -711872244100331378
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ships(Bordered)_3
+      name: Block(Map1)_3
       rect:
         serializedVersion: 2
-        x: 111
-        y: 415
-        width: 546
-        height: 546
+        x: 2431
+        y: 1407
+        width: 514
+        height: 514
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9642828b4da836cf0800000000000000
-      internalID: -260211707230018455
+      spriteID: 4c2c04bbf95118020800000000000000
+      internalID: 2342177056994935492
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ships(Bordered)_4
+      name: Block(Map1)_5
       rect:
         serializedVersion: 2
-        x: 751
-        y: 415
-        width: 546
-        height: 546
+        x: 3199
+        y: 1407
+        width: 514
+        height: 514
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dcf9480a8312f1c80800000000000000
-      internalID: -8349918657026678835
+      spriteID: 252ba0ff6ea263290800000000000000
+      internalID: -7911088523819961774
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Ships(Bordered)_5
+      name: Block(Map1)_6
       rect:
         serializedVersion: 2
-        x: 1391
-        y: 415
-        width: 546
-        height: 546
+        x: 127
+        y: 575
+        width: 514
+        height: 514
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4ee3b9c3f0893b100800000000000000
-      internalID: 122608806077873892
+      spriteID: e71c1790a488b7c20800000000000000
+      internalID: 3205305411371647358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Block(Map1)_7
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 575
+        width: 514
+        height: 514
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e975ca49b1bbe08e0800000000000000
+      internalID: -1725235880103487586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Block(Map1)_8
+      rect:
+        serializedVersion: 2
+        x: 1663
+        y: 575
+        width: 514
+        height: 514
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b53ffc29bbf6bc8d0800000000000000
+      internalID: -2825041489832184997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Block(Map1)_9
+      rect:
+        serializedVersion: 2
+        x: 2431
+        y: 575
+        width: 514
+        height: 514
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2aecfbb40527bc010800000000000000
+      internalID: 1210186614072921762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Block(Map1)_10
+      rect:
+        serializedVersion: 2
+        x: 1935
+        y: 47
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41d9f2e0a8358e340800000000000000
+      internalID: 4893252847546637588
       vertices: []
       indices: 
       edges: []
@@ -289,7 +392,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 35a35042f27ab764eadd2cddcbf82919
     internalID: 0
     vertices: []
     indices: 
@@ -299,12 +402,17 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Ships(Bordered)_0: -1822851176547488934
-      Ships(Bordered)_1: -5829077949677762714
-      Ships(Bordered)_2: -5720193251572854745
-      Ships(Bordered)_3: -260211707230018455
-      Ships(Bordered)_4: -8349918657026678835
-      Ships(Bordered)_5: 122608806077873892
+      Block(Map1)_0: 6887728795132578350
+      Block(Map1)_1: -1750496329066103757
+      Block(Map1)_10: 4893252847546637588
+      Block(Map1)_2: -711872244100331378
+      Block(Map1)_3: 2342177056994935492
+      Block(Map1)_4: -7752516953758990665
+      Block(Map1)_5: -7911088523819961774
+      Block(Map1)_6: 3205305411371647358
+      Block(Map1)_7: -1725235880103487586
+      Block(Map1)_8: -2825041489832184997
+      Block(Map1)_9: 1210186614072921762
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
