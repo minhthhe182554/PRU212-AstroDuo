@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: c8990ad652dd4e942a3bb488eafb3092
+guid: 20386425319be4a44a6bc0a7d075cb76
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8573962228187662794
-    second: Random_0
+      213: -8460061443677059355
+    second: Saber_0
+  - first:
+      213: 5301596982256512846
+    second: Saber_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,23 +142,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Random_0
+      name: Saber_0
       rect:
         serializedVersion: 2
-        x: 127
-        y: 111
-        width: 274
-        height: 274
+        x: 175
+        y: 47
+        width: 674
+        height: 930
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ac90eb04835dcf670800000000000000
-      internalID: 8573962228187662794
+      spriteID: 5e686a7b0f2d79a80800000000000000
+      internalID: -8460061443677059355
       vertices: []
       indices: 
       edges: []
@@ -164,7 +167,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 7855981f0b2444945b866c2da13b90a0
     internalID: 0
     vertices: []
     indices: 
@@ -174,7 +177,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Random_0: 8573962228187662794
+      Saber_0: -8460061443677059355
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
