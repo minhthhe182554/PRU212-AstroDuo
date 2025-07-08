@@ -5,6 +5,16 @@ TagManager:
   serializedVersion: 3
   tags:
   - CannotDestroyBlock
+  - CanDestroyBlock
+  - Bullet
+  - Jet
+  - PowerUp
+  - ScatterShot
+  - LaserShot
+  - Saber
+  - Reverse
+  - Mine
+  - Shield
   layers:
   - Default
   - TransparentFX
