@@ -4,6 +4,13 @@ public class PowerUp : MonoBehaviour
 {
     [SerializeField] private WeaponType weaponType;
     [SerializeField] private AudioClip pickupSound;
+    [SerializeField] private float rotationSpeed = 50f; 
+    
+    void Update()
+    {
+        // rotate
+        transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
+    }
     
     void OnTriggerEnter2D(Collider2D other)
     {
