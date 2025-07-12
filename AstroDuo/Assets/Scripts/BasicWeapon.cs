@@ -15,6 +15,11 @@ public class BasicWeapon : IWeapon
     private Queue<float> bulletCooldownQueue;
     private float lastFireTime;
     
+    // Track owner info
+    private int ownerId = -1;
+    private string ownerName = "";
+    private GameObject ownerGameObject; // NEW: Owner GameObject reference
+    
     public BasicWeapon()
     {
         currentAmmo = maxAmmo;
@@ -42,6 +47,13 @@ public class BasicWeapon : IWeapon
         bullet.transform.position = firePoint.position;
         bullet.transform.rotation = firePoint.rotation;
         
+        // NEW: Set bullet owner with GameObject reference
+        BasicBulletBehaviour bulletBehaviour = bullet.GetComponent<BasicBulletBehaviour>();
+        if (bulletBehaviour != null)
+        {
+            bulletBehaviour.SetOwner(ownerId, ownerName, ownerGameObject);
+        }
+        
         // Fire bullet
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         if (rb != null)
@@ -54,7 +66,7 @@ public class BasicWeapon : IWeapon
         bulletCooldownQueue.Enqueue(Time.time + bulletCooldown);
         lastFireTime = Time.time;
         
-        Debug.Log($"Basic bullet fired! Ammo remaining: {currentAmmo}");
+        Debug.Log($"Basic bullet fired by Player {ownerId}! Ammo remaining: {currentAmmo}");
     }
     
     private void UpdateAmmo()
@@ -68,12 +80,25 @@ public class BasicWeapon : IWeapon
     
     public void OnEquipped(JetsBehaviour jet)
     {
-        // Basic weapon is always equipped, no special setup needed
+        // Set owner info when equipped
+        SetOwnerFromJet(jet);
     }
     
     public void OnUnequipped(JetsBehaviour jet)
     {
         // Basic weapon is never unequipped, no cleanup needed
+    }
+    
+    // Set owner info from JetsBehaviour
+    private void SetOwnerFromJet(JetsBehaviour jet)
+    {
+        if (jet == null) return;
+        
+        ownerGameObject = jet.gameObject; // NEW: Store GameObject reference
+        ownerId = jet.playerId; // NEW: Use playerId from JetsBehaviour
+        ownerName = jet.gameObject.name;
+        
+        Debug.Log($"🔧 BasicWeapon owner set: Player {ownerId} ({ownerName})");
     }
     
     public int GetCurrentAmmo()
