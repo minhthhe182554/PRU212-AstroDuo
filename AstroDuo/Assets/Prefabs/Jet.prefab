@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.91, y: 6.76, z: 63.65093}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6642554124768274428}
@@ -103,6 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 277f3860d4290cd498681bd4f6f67473, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerId: 1
   speed: 3
   rotationAngle: 20
   dashSpeed: 10
@@ -110,6 +111,7 @@ MonoBehaviour:
   doubleTapTimeThreshold: 0.3
   dashArcAngle: 45
   dashArcIntensity: 1
+  dashCooldown: 0.8
   moveKey: 97
   fireKey: 119
   firePoint: {fileID: 6642554124768274428}
@@ -201,7 +203,7 @@ Transform:
   m_GameObject: {fileID: 7450877361464852318}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

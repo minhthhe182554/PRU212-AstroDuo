@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class JetsBehaviour : MonoBehaviour
 {
+    [Header("Player Info")] // NEW: Player identification
+    [SerializeField] public int playerId = 1; // 1 for Player1, 2 for Player2
+    
     [Header("Movement")]
     [SerializeField] public float speed = 2f;
     [SerializeField] public float rotationAngle = 20f;
@@ -39,6 +42,9 @@ public class JetsBehaviour : MonoBehaviour
         basicWeapon = new BasicWeapon();
         currentWeapon = basicWeapon;
         
+        // NEW: Set weapon owner immediately
+        basicWeapon.OnEquipped(this);
+        
         // Find FirePoint if not assigned
         if (firePoint == null)
         {
@@ -48,6 +54,8 @@ public class JetsBehaviour : MonoBehaviour
                 Debug.LogError("FirePoint not found! Please create a child object named 'FirePoint'");
             }
         }
+        
+        Debug.Log($"🚀 Player {playerId} ({gameObject.name}) initialized!");
     }
 
     void Update()
@@ -222,7 +230,7 @@ public class JetsBehaviour : MonoBehaviour
         }
     }
 
-    private void AutoMoveForward()
+    private void AutoMoveForward() 
     {   
         transform.Translate(Vector2.up * speed * Time.deltaTime);
     }

@@ -17,6 +17,24 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SettingScene.unity
     guid: 4e7ec2119e9ad8d4184bd4e786a7ee58
+  - enabled: 1
+    path: Assets/Scenes/ScoreScene.unity
+    guid: fd85c8186ad83184fa33c3121abed6b6
+  - enabled: 1
+    path: Assets/Scenes/Map1.unity
+    guid: 7bc8d354ad5da774e893dde0be6ba5a1
+  - enabled: 1
+    path: Assets/Scenes/Map2.unity
+    guid: 76a916f4397348241913d7a36500b208
+  - enabled: 1
+    path: Assets/Scenes/Map4.unity
+    guid: b2b7177b09c286942bd0060f071e3849
+  - enabled: 1
+    path: Assets/Scenes/Map5.unity
+    guid: a1c9847695377954baa4c648ba7cdbc9
+  - enabled: 1
+    path: Assets/Scenes/Map6.unity
+    guid: 2b98dc6fbee39be47bca02de9f87bd48
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
