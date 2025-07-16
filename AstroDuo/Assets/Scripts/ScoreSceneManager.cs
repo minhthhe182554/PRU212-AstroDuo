@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class ScoreSceneManager : MonoBehaviour
 {
@@ -13,6 +14,13 @@ public class ScoreSceneManager : MonoBehaviour
     [SerializeField] private float moveDistance = 5f;     // Khoảng cách di chuyển ngang mỗi điểm
     [SerializeField] private float animationDuration = 1f; // Thời gian animation
     
+    [Header("Auto Transition Settings")]
+    [SerializeField] private float scoreDisplayTime = 10f; // Time to show scores before next map
+    
+    [Header("Spin Animation Settings")]
+    [SerializeField] private float spinSpeed = 720f; // Degrees per second
+    [SerializeField] private float spinDuration = 0.5f; // Half second spin
+    
     // Base positions (0-0 score positions)
     private Vector3 player1BasePosition;
     private Vector3 player2BasePosition;
@@ -22,6 +30,45 @@ public class ScoreSceneManager : MonoBehaviour
         InitializeReferences();
         StoreBasePositions();
         UpdatePlayerPositions();
+        
+        // Start auto-transition logic
+        StartCoroutine(HandleAutoTransition());
+    }
+    
+    // Handle automatic transition to next map or winner scene
+    private IEnumerator HandleAutoTransition()
+    {
+        // Wait for the specified time
+        yield return new WaitForSeconds(scoreDisplayTime);
+        
+        // Clear turret penalty flags before transitioning
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ClearTurretPenaltyFlags();
+        }
+        
+        // Check if someone has won
+        if (GameManager.Instance != null && GameManager.Instance.HasWinner())
+        {
+            int winnerId = GameManager.Instance.GetWinnerPlayerId();
+            Debug.Log($"🏆 Player {winnerId} wins! Going to Winner Scene");
+            SceneManager.LoadScene(GameConst.WINNER_SCENE);
+        }
+        else
+        {
+            // No winner yet, continue to next random map
+            if (GameManager.Instance != null)
+            {
+                string nextMap = GameManager.Instance.GetRandomMap();
+                Debug.Log($"🎮 Loading next map: {nextMap}");
+                SceneManager.LoadScene(nextMap);
+            }
+            else
+            {
+                Debug.LogError("GameManager not found! Loading default scene.");
+                SceneManager.LoadScene(GameConst.SAMPLE_SCENE);
+            }
+        }
     }
     
     void InitializeReferences()
@@ -72,24 +119,60 @@ public class ScoreSceneManager : MonoBehaviour
             return;
         }
         
-        // Get current scores
-        int player1Score = GameManager.Instance.Player1Score;
-        int player2Score = GameManager.Instance.Player2Score;
+        // Get current and previous scores
+        int player1CurrentScore = GameManager.Instance.Player1Score;
+        int player2CurrentScore = GameManager.Instance.Player2Score;
+        int player1PreviousScore = GameManager.Instance.PreviousPlayer1Score;
+        int player2PreviousScore = GameManager.Instance.PreviousPlayer2Score;
         
-        Debug.Log($"📊 Current scores: P1={player1Score}, P2={player2Score}");
+        // Check for turret penalties
+        bool player1TurretPenalty = GameManager.Instance.Player1TurretPenalty;
+        bool player2TurretPenalty = GameManager.Instance.Player2TurretPenalty;
         
-        // Update Player 1 position (di chuyển về phía phải)
+        Debug.Log($"📊 Score animation: P1: {player1PreviousScore}→{player1CurrentScore} (Turret: {player1TurretPenalty}), P2: {player2PreviousScore}→{player2CurrentScore} (Turret: {player2TurretPenalty})");
+        
+        // Update Player 1 position/animation
         if (player1Sprite != null)
         {
-            Vector3 targetPos = player1BasePosition + Vector3.right * (player1Score * moveDistance);
-            StartCoroutine(MoveToPosition(player1Sprite, targetPos));
+            if (player1TurretPenalty)
+            {
+                // Turret penalty: spin animation instead of movement
+                Vector3 targetPos = player1BasePosition + Vector3.right * (player1CurrentScore * moveDistance);
+                player1Sprite.position = targetPos; // Set position immediately
+                StartCoroutine(SpinAnimation(player1Sprite)); // Add spin animation
+                Debug.Log($"🌪️ Player 1 turret penalty - performing spin animation!");
+            }
+            else
+            {
+                // Normal movement animation
+                Vector3 startPos = player1BasePosition + Vector3.right * (player1PreviousScore * moveDistance);
+                Vector3 targetPos = player1BasePosition + Vector3.right * (player1CurrentScore * moveDistance);
+                
+                player1Sprite.position = startPos;
+                StartCoroutine(MoveToPosition(player1Sprite, targetPos));
+            }
         }
         
-        // Update Player 2 position (di chuyển về phía phải)
+        // Update Player 2 position/animation
         if (player2Sprite != null)
         {
-            Vector3 targetPos = player2BasePosition + Vector3.right * (player2Score * moveDistance);
-            StartCoroutine(MoveToPosition(player2Sprite, targetPos));
+            if (player2TurretPenalty)
+            {
+                // Turret penalty: spin animation instead of movement
+                Vector3 targetPos = player2BasePosition + Vector3.right * (player2CurrentScore * moveDistance);
+                player2Sprite.position = targetPos; // Set position immediately
+                StartCoroutine(SpinAnimation(player2Sprite)); // Add spin animation
+                Debug.Log($"🌪️ Player 2 turret penalty - performing spin animation!");
+            }
+            else
+            {
+                // Normal movement animation
+                Vector3 startPos = player2BasePosition + Vector3.right * (player2PreviousScore * moveDistance);
+                Vector3 targetPos = player2BasePosition + Vector3.right * (player2CurrentScore * moveDistance);
+                
+                player2Sprite.position = startPos;
+                StartCoroutine(MoveToPosition(player2Sprite, targetPos));
+            }
         }
     }
     
@@ -110,6 +193,28 @@ public class ScoreSceneManager : MonoBehaviour
         
         // Ensure exact final position
         sprite.position = targetPosition;
+    }
+
+    // NEW: Spin animation coroutine
+    private IEnumerator SpinAnimation(Transform sprite)
+    {
+        float elapsed = 0f;
+        float totalRotation = spinSpeed * spinDuration;
+        Vector3 startRotation = sprite.eulerAngles;
+        
+        Debug.Log($"🌪️ [SPIN START] Starting spin animation for {sprite.name}");
+        
+        while (elapsed < spinDuration)
+        {
+            elapsed += Time.deltaTime;
+            float rotationThisFrame = spinSpeed * Time.deltaTime;
+            
+            sprite.Rotate(0, 0, rotationThisFrame);
+            
+            yield return null;
+        }
+        
+        Debug.Log($"🌪️ [SPIN END] Spin animation completed for {sprite.name}");
     }
     
     // PUBLIC METHOD - Call này để force update nếu cần

@@ -152,32 +152,9 @@ MonoBehaviour:
   player2Sprite: {fileID: 1960373201}
   player1ObjectName: Player1
   player2ObjectName: Player2
-  scoreDistance: 1
+  moveDistance: 5
   animationDuration: 1
-  moveCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  scoreDisplayTime: 5
 --- !u!4 &117050845
 Transform:
   m_ObjectHideFlags: 0
@@ -299,7 +276,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 2894126367625617641, guid: 603c70f6f4ba9144faad7ab1a87490e8, type: 3}
+  m_Sprite: {fileID: -2806762971703644979, guid: e1430bcfafc9b6e4685968bd66f870a6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

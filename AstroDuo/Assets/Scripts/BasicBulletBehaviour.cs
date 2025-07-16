@@ -18,7 +18,7 @@ public class BasicBulletBehaviour : MonoBehaviour
     
     void OnEnable()
     {
-        spawnTime = Time.time; // NEW: Record spawn time
+        // DON'T set spawnTime here - wait until SetOwner is called
         
         if (lifetimeCoroutine != null)
         {
@@ -42,22 +42,39 @@ public class BasicBulletBehaviour : MonoBehaviour
         ownerId = playerId;
         ownerName = playerName;
         ownerGameObject = ownerGO;
-        Debug.Log($"🎯 Bullet owner set: Player {playerId} ({playerName})");
+        spawnTime = Time.time; // MOVE spawnTime setting HERE to ensure proper timing
+        Debug.Log($"🎯 [BULLET OWNER SET] Player {playerId} ({playerName}) | SpawnTime: {spawnTime}");
     }
     
     // NEW: Check if should ignore collision with specific object
     private bool ShouldIgnoreCollision(GameObject hitObject)
     {
+        // SAFETY CHECK: Make sure owner has been set
+        if (ownerId == -1 || ownerGameObject == null)
+        {
+            Debug.LogWarning($"⚠️ [COLLISION WARNING] Bullet owner not set yet! Ignoring collision with {hitObject.name}");
+            return true; // Ignore collision if owner not set yet
+        }
+        
         // Ignore collision with owner for a short time after spawn
         if (ownerGameObject != null && hitObject == ownerGameObject)
         {
             float timeSinceSpawn = Time.time - spawnTime;
             if (timeSinceSpawn < ignoreOwnerDuration)
             {
-                Debug.Log($"🚫 Ignoring collision with owner (time: {timeSinceSpawn:F2}s)");
+                Debug.Log($"🚫 [COLLISION IGNORED] Owner collision ignored (time: {timeSinceSpawn:F2}s)");
                 return true;
             }
         }
+        
+        // NEW: Ignore collision with bullets from the same player
+        string currentPlayerBulletTag = $"Player{ownerId}Bullet";
+        if (hitObject.CompareTag(currentPlayerBulletTag))
+        {
+            Debug.Log($"🚫 [BULLET COLLISION IGNORED] Same player bullet collision: {hitObject.name}");
+            return true;
+        }
+        
         return false;
     }
     
@@ -69,6 +86,13 @@ public class BasicBulletBehaviour : MonoBehaviour
     
     void OnTriggerEnter2D(Collider2D other)
     {
+        // NEW: Safety check - if owner not set yet, ignore all collisions
+        if (ownerId == -1)
+        {
+            Debug.LogWarning($"⚠️ [EARLY COLLISION] Bullet hit {other.name} before owner was set! Ignoring.");
+            return;
+        }
+        
         // NEW: Check if should ignore this collision
         if (ShouldIgnoreCollision(other.gameObject))
         {
@@ -121,6 +145,11 @@ public class BasicBulletBehaviour : MonoBehaviour
             Destroy(other.gameObject);
             ReturnToPool();
         }
+        // NEW: Handle collision with enemy bullets
+        else if (other.CompareTag("Player1Bullet") || other.CompareTag("Player2Bullet"))
+        {
+            HandleBulletCollision(other);
+        }
     }
     
     // Handle collision with Jet players
@@ -129,14 +158,14 @@ public class BasicBulletBehaviour : MonoBehaviour
         // Get hit player's ID from their name or component
         int hitPlayerId = GetPlayerIdFromJet(jetCollider.gameObject);
         
-        Debug.Log($"💥 Bullet (Owner: Player {ownerId}) hit Player {hitPlayerId} ({jetCollider.name})");
+        Debug.Log($"💥 [JET COLLISION] Bullet Owner: Player {ownerId} ({ownerName}) | Hit Player: {hitPlayerId} ({jetCollider.name})");
         
         // Check if bullet hit a different player (not self)
         if (ownerId != -1 && hitPlayerId != -1 && ownerId != hitPlayerId)
         {
             // Bullet owner gets a point
             AddScoreToPlayer(ownerId);
-            Debug.Log($"⭐ Player {ownerId} scored! Hit Player {hitPlayerId}");
+            Debug.Log($"⭐ [VALID HIT] Player {ownerId} scored! Hit Player {hitPlayerId}");
             
             // Check if game should end
             CheckGameEnd();
@@ -144,6 +173,7 @@ public class BasicBulletBehaviour : MonoBehaviour
         else if (ownerId == hitPlayerId)
         {
             // NEW: Self-shot - subtract score if player has points
+            Debug.Log($"🤡 [SELF HIT] Player {ownerId} shot themselves! Owner={ownerId}, Hit={hitPlayerId}");
             SubtractScoreFromPlayer(ownerId);
             
             // Still check if game should end (in case we want to handle end conditions)
@@ -151,10 +181,37 @@ public class BasicBulletBehaviour : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"❓ Unknown players in collision: Owner={ownerId}, Hit={hitPlayerId}");
+            Debug.LogWarning($"❓ [UNKNOWN COLLISION] Owner={ownerId}, Hit={hitPlayerId} | Names: {ownerName} → {jetCollider.name}");
         }
         
         ReturnToPool();
+    }
+    
+    // NEW: Handle collision with enemy bullets
+    private void HandleBulletCollision(Collider2D bulletCollider)
+    {
+        BasicBulletBehaviour otherBullet = bulletCollider.GetComponent<BasicBulletBehaviour>();
+        if (otherBullet == null) return;
+        
+        int otherBulletOwnerId = otherBullet.ownerId;
+        
+        Debug.Log($"💥 [BULLET COLLISION] Player {ownerId} bullet hit Player {otherBulletOwnerId} bullet");
+        
+        // Both bullets are destroyed when they collide (if from different players)
+        if (ownerId != otherBulletOwnerId && ownerId != -1 && otherBulletOwnerId != -1)
+        {
+            Debug.Log($"⚡ [BULLET CLASH] Both bullets destroyed! Player {ownerId} vs Player {otherBulletOwnerId}");
+            
+            // Return other bullet to its pool
+            otherBullet.ReturnToPool();
+            
+            // Return this bullet to pool
+            ReturnToPool();
+        }
+        else
+        {
+            Debug.Log($"🚫 [BULLET IGNORED] Same player bullet or invalid owner IDs");
+        }
     }
     
     // Get player ID from GameObject name or component
@@ -164,22 +221,31 @@ public class BasicBulletBehaviour : MonoBehaviour
         JetsBehaviour jetBehaviour = jet.GetComponent<JetsBehaviour>();
         if (jetBehaviour != null)
         {
+            Debug.Log($"🔍 [GET PLAYER ID] From JetsBehaviour: {jet.name} → Player {jetBehaviour.playerId}");
             return jetBehaviour.playerId;
         }
         
         // Fallback to name pattern matching
         string jetName = jet.name.ToLower();
+        int playerId = -1;
+        
         if (jetName.Contains("player1") || jetName.Contains("p1") || jetName.Contains("jet1"))
         {
-            return 1;
+            playerId = 1;
         }
         else if (jetName.Contains("player2") || jetName.Contains("p2") || jetName.Contains("jet2"))
         {
-            return 2;
+            playerId = 2;
         }
         
-        Debug.LogWarning($"❓ Could not determine player ID for jet: {jetName}");
-        return -1;
+        Debug.Log($"🔍 [GET PLAYER ID] From name pattern: {jet.name} → Player {playerId}");
+        
+        if (playerId == -1)
+        {
+            Debug.LogWarning($"❓ Could not determine player ID for jet: {jetName}");
+        }
+        
+        return playerId;
     }
     
     // Add score to specific player
@@ -193,13 +259,11 @@ public class BasicBulletBehaviour : MonoBehaviour
         
         if (playerId == 1)
         {
-            GameManager.Instance.Player1Score++;
-            Debug.Log($"📊 Player 1 Score: {GameManager.Instance.Player1Score}");
+            GameManager.Instance.AddPlayer1Score();
         }
         else if (playerId == 2)
         {
-            GameManager.Instance.Player2Score++;
-            Debug.Log($"📊 Player 2 Score: {GameManager.Instance.Player2Score}");
+            GameManager.Instance.AddPlayer2Score();
         }
     }
 
@@ -214,27 +278,11 @@ public class BasicBulletBehaviour : MonoBehaviour
         
         if (playerId == 1)
         {
-            if (GameManager.Instance.Player1Score > 0)
-            {
-                GameManager.Instance.Player1Score--;
-                Debug.Log($"🤡 Player 1 shot themselves! Score reduced to: {GameManager.Instance.Player1Score}");
-            }
-            else
-            {
-                Debug.Log($"🤷 Player 1 shot themselves but score is already 0! No penalty.");
-            }
+            GameManager.Instance.SubtractPlayer1Score();
         }
         else if (playerId == 2)
         {
-            if (GameManager.Instance.Player2Score > 0)
-            {
-                GameManager.Instance.Player2Score--;
-                Debug.Log($"🤡 Player 2 shot themselves! Score reduced to: {GameManager.Instance.Player2Score}");
-            }
-            else
-            {
-                Debug.Log($"🤷 Player 2 shot themselves but score is already 0! No penalty.");
-            }
+            GameManager.Instance.SubtractPlayer2Score();
         }
     }
     
@@ -246,9 +294,11 @@ public class BasicBulletBehaviour : MonoBehaviour
         int player1Score = GameManager.Instance.Player1Score;
         int player2Score = GameManager.Instance.Player2Score;
         
-        // Switch to ScoreScene immediately for testing
-        // Later you can add win conditions like: if (player1Score >= GameConst.MAX_SCORE || player2Score >= GameConst.MAX_SCORE)
-        Debug.Log($"🏁 Switching to Score Scene! P1: {player1Score}, P2: {player2Score}");
+        // NEW: Only switch to ScoreScene when someone scores, not every hit
+        // Check if anyone reached max score OR we want to show score after each point
+        Debug.Log($"🏁 Point scored! P1: {player1Score}, P2: {player2Score}");
+        
+        // Always go to ScoreScene after each point to show progress
         SceneManager.LoadScene(GameConst.SCORE_SCENE);
     }
     
@@ -330,15 +380,18 @@ public class BasicBulletBehaviour : MonoBehaviour
         return false;
     }
     
-    private void ReturnToPool()
+    public void ReturnToPool()
     {
-        // Reset owner when returning to pool
-        ownerId = -1;
-        ownerName = "";
-        ownerGameObject = null; // NEW: Reset owner reference
+        // Store playerId before resetting for pool return
+        int playerIdForReturn = ownerId;
         
-        if (BulletPool.Instance != null)
+        if (BulletPool.Instance != null && playerIdForReturn != -1)
         {
+            BulletPool.Instance.ReturnBullet(gameObject, playerIdForReturn);
+        }
+        else if (BulletPool.Instance != null)
+        {
+            // Fallback to legacy method if playerId not set
             BulletPool.Instance.ReturnBullet(gameObject);
         }
         else
@@ -350,5 +403,24 @@ public class BasicBulletBehaviour : MonoBehaviour
     void OnBecameInvisible()
     {
         ReturnToPool();
+    }
+    
+    // NEW: Method to reset bullet properties when returned to pool
+    public void ResetBullet()
+    {
+        // Reset owner info
+        ownerId = -1;
+        ownerName = "";
+        ownerGameObject = null;
+        spawnTime = 0f;
+        
+        // Stop any running coroutines
+        if (lifetimeCoroutine != null)
+        {
+            StopCoroutine(lifetimeCoroutine);
+            lifetimeCoroutine = null;
+        }
+        
+        Debug.Log("🔄 Bullet reset for pool return");
     }
 }

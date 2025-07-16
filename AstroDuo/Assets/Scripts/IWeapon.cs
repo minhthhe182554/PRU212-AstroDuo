@@ -16,6 +16,5 @@ public enum WeaponType
     Mine,           
     Saber,          
     ScatterShot,      
-    Reverse,      
     Shield      
 }

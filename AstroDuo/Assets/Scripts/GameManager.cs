@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour 
@@ -7,6 +8,10 @@ public class GameManager : MonoBehaviour
     [Header("Score")]
     public int Player1Score { get; set; } = 0;
     public int Player2Score { get; set; } = 0;
+    
+    [Header("Previous Score (for ScoreScene animation)")]
+    public int PreviousPlayer1Score { get; private set; } = 0;
+    public int PreviousPlayer2Score { get; private set; } = 0;
 
     [Header("Game Settings")]
     public bool ShieldSupport { get; set; } = false;
@@ -25,6 +30,17 @@ public class GameManager : MonoBehaviour
     [Header("Current Selected Skins")]
     public Sprite Player1CurrentSkin { get; private set; }
     public Sprite Player2CurrentSkin { get; private set; }
+
+    [Header("Map Management")]
+    public string CurrentMap { get; private set; }
+
+    [Header("Turret Penalty Tracking")]
+    public bool Player1TurretPenalty { get; private set; } = false;
+    public bool Player2TurretPenalty { get; private set; } = false;
+
+    [Header("Spin Animation Settings")]
+    [SerializeField] private float spinSpeed = 720f; // Degrees per second
+    [SerializeField] private float spinDuration = 0.5f; // Half second spin
 
     void Awake() 
     {
@@ -65,10 +81,103 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // NEW: Methods to update scores while tracking previous values
+    public void AddPlayer1Score()
+    {
+        PreviousPlayer1Score = Player1Score;
+        Player1Score++;
+        Debug.Log($"📊 Player 1 Score: {PreviousPlayer1Score} → {Player1Score}");
+    }
+
+    public void AddPlayer2Score()
+    {
+        PreviousPlayer2Score = Player2Score;
+        Player2Score++;
+        Debug.Log($"📊 Player 2 Score: {PreviousPlayer2Score} → {Player2Score}");
+    }
+
+    public void SubtractPlayer1Score()
+    {
+        if (Player1Score > 0)
+        {
+            PreviousPlayer1Score = Player1Score;
+            Player1Score--;
+            Debug.Log($"🤡 Player 1 shot themselves! Score: {PreviousPlayer1Score} → {Player1Score}");
+        }
+        else
+        {
+            Debug.Log($"🤷 Player 1 shot themselves but score is already 0! No penalty.");
+        }
+    }
+
+    public void SubtractPlayer2Score()
+    {
+        if (Player2Score > 0)
+        {
+            PreviousPlayer2Score = Player2Score;
+            Player2Score--;
+            Debug.Log($"🤡 Player 2 shot themselves! Score: {PreviousPlayer2Score} → {Player2Score}");
+        }
+        else
+        {
+            Debug.Log($"🤷 Player 2 shot themselves but score is already 0! No penalty.");
+        }
+    }
+
     // Thêm method để force refresh skins (useful cho debugging)
     public void RefreshDefaultSkins()
     {
         InitializeDefaultSkins();
+    }
+
+    // Map Management Methods
+    public string GetRandomMap()
+    {
+        if (GameConst.AVAILABLE_MAPS.Length == 0)
+        {
+            Debug.LogError("No available maps configured!");
+            return GameConst.SAMPLE_SCENE;
+        }
+        
+        int randomIndex = Random.Range(0, GameConst.AVAILABLE_MAPS.Length);
+        string selectedMap = GameConst.AVAILABLE_MAPS[randomIndex];
+        CurrentMap = selectedMap;
+        
+        Debug.Log($"🎯 Selected random map: {selectedMap}");
+        return selectedMap;
+    }
+
+    public void SetCurrentMap(string mapName)
+    {
+        CurrentMap = mapName;
+        Debug.Log($"📍 Current map set to: {mapName}");
+    }
+
+    // Check if any player has won
+    public bool HasWinner()
+    {
+        return Player1Score >= GameConst.MAX_SCORE || Player2Score >= GameConst.MAX_SCORE;
+    }
+
+    public int GetWinnerPlayerId()
+    {
+        if (Player1Score >= GameConst.MAX_SCORE)
+            return 1;
+        else if (Player2Score >= GameConst.MAX_SCORE)
+            return 2;
+        else
+            return -1; // No winner yet
+    }
+
+    // Reset scores for new game session
+    public void ResetScores()
+    {
+        Player1Score = 0;
+        Player2Score = 0;
+        PreviousPlayer1Score = 0;
+        PreviousPlayer2Score = 0;
+        ClearTurretPenaltyFlags(); // Clear penalty flags
+        Debug.Log("🔄 Scores reset for new game session");
     }
 
     public void RandomizeSkins()
@@ -192,13 +301,14 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("[GameManager] Settings reset to default!");
     }
-    
-    // Getters
+
+    // Add getter for available skins (for SkinManager)
     public Sprite[] GetAvailableSkins()
     {
         return availableSkins;
     }
 
+    // RESTORED: Getter methods that SkinManager needs
     public Sprite GetPlayer1Skin()
     {
         return Player1CurrentSkin;
@@ -207,6 +317,75 @@ public class GameManager : MonoBehaviour
     public Sprite GetPlayer2Skin()
     {
         return Player2CurrentSkin;
+    }
+
+    // NEW: Turret penalty methods - track for animation
+    public void TurretPenaltyPlayer1()
+    {
+        PreviousPlayer1Score = Player1Score;
+        Player1TurretPenalty = true; // Flag for spin animation
+        
+        if (Player1Score > 0)
+        {
+            Player1Score--;
+            Debug.Log($"💔 [TURRET PENALTY] Player 1 lost 1 point: {PreviousPlayer1Score} → {Player1Score}");
+        }
+        else
+        {
+            Debug.Log($"💔 [TURRET PENALTY] Player 1 at 0 points - will trigger spin animation in ScoreScene!");
+        }
+    }
+
+    public void TurretPenaltyPlayer2()
+    {
+        PreviousPlayer2Score = Player2Score;
+        Player2TurretPenalty = true; // Flag for spin animation
+        
+        if (Player2Score > 0)
+        {
+            Player2Score--;
+            Debug.Log($"💔 [TURRET PENALTY] Player 2 lost 1 point: {PreviousPlayer2Score} → {Player2Score}");
+        }
+        else
+        {
+            Debug.Log($"💔 [TURRET PENALTY] Player 2 at 0 points - will trigger spin animation in ScoreScene!");
+        }
+    }
+
+    // NEW: Check if game should end after turret penalty
+    public bool ShouldEndGameAfterTurretPenalty()
+    {
+        return true; // Always end game after turret penalty
+    }
+
+    // NEW: Clear penalty flags (called when entering new map)
+    public void ClearTurretPenaltyFlags()
+    {
+        Player1TurretPenalty = false;
+        Player2TurretPenalty = false;
+        Debug.Log("🔄 Turret penalty flags cleared");
+    }
+
+    // NEW: Spin animation coroutine
+    private IEnumerator SpinAnimation(Transform sprite)
+    {
+        float elapsed = 0f;
+        float totalRotation = spinSpeed * spinDuration;
+        Vector3 startRotation = sprite.eulerAngles;
+        
+        Debug.Log($"🌪️ [SPIN START] Starting spin animation for {sprite.name}");
+        
+        while (elapsed < spinDuration)
+        {
+            elapsed += Time.deltaTime;
+            float rotationThisFrame = spinSpeed * Time.deltaTime;
+            
+            sprite.Rotate(0, 0, rotationThisFrame);
+            
+            yield return null;
+        }
+        
+        Debug.Log($"🌪️ [SPIN END] Spin animation completed for {sprite.name}");
     }
 }
 

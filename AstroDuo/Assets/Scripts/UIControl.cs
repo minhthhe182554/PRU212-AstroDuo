@@ -22,7 +22,21 @@ public class UIControl : MonoBehaviour
     public void ToPlayScene()
     {
         // Play button-click sound here
-        SceneManager.LoadScene(GameConst.SAMPLE_SKIN_SCENE);
+        
+        // NEW: Reset scores when starting new game session from SelectSkinScene
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ResetScores();
+            
+            // Get random map and load it
+            string randomMap = GameManager.Instance.GetRandomMap();
+            SceneManager.LoadScene(randomMap);
+        }
+        else
+        {
+            Debug.LogError("GameManager Instance not found! Loading default scene.");
+            SceneManager.LoadScene(GameConst.SAMPLE_SCENE);
+        }
     }
 
     public void OnButtonHoverEnter(RectTransform targetRectTransform)

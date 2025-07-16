@@ -112,7 +112,7 @@ public class AsteroidManager : MonoBehaviour
     bool IsInsideBorder(Vector2 worldPosition)
     {
         // Convert to tilemap coordinates
-        Vector3Int cellPos = borderTilemap.WorldToCell(worldPosition);
+        Vector3Int cellPos = borderTilemap.WorldToCell(worldPosition); 
         
         // Check 4 hướng từ vị trí này ra ngoài
         // Nếu tất cả hướng đều gặp border tile thì position này nằm trong viền
@@ -207,6 +207,7 @@ public class AsteroidManager : MonoBehaviour
     public void ClearAllAsteroids()
     {
         AsteroidBehaviour[] asteroids = FindObjectsOfType<AsteroidBehaviour>();
+        // AsteroidBehaviour[] asteroids = FindObjectsByType<AsteroidBehaviour>();
         foreach (var asteroid in asteroids)
         {
             Destroy(asteroid.gameObject);
