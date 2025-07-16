@@ -20,6 +20,9 @@ public class JetsBehaviour : MonoBehaviour
     [SerializeField] private KeyCode moveKey = KeyCode.LeftArrow; 
     [SerializeField] private KeyCode fireKey = KeyCode.UpArrow; 
 
+    [Header("Auto Reverse System")]
+    [SerializeField] private float reverseInterval = 20f; // 20 seconds
+
     [Header("Weapon System")]
     [SerializeField] private Transform firePoint;
 
@@ -27,6 +30,12 @@ public class JetsBehaviour : MonoBehaviour
     private bool isDashing = false;
     private Coroutine currentDashCoroutine; // ← NEW: Track current dash
     private float lastDashTime = -999f; // ← NEW: Track last dash time
+    
+    // Auto-reverse system - PER MAP (not global)
+    private static float mapStartTime = 0f;
+    private static bool isReversed = false;
+    private static bool mapStartTimeSet = false;
+    private static string currentMapName = "";
     
     // Weapon system
     private IWeapon currentWeapon;
@@ -55,11 +64,33 @@ public class JetsBehaviour : MonoBehaviour
             }
         }
         
+        // Initialize map timer (resets for each new map)
+        InitializeMapTimer();
+        
         Debug.Log($"🚀 Player {playerId} ({gameObject.name}) initialized!");
+    }
+    
+    private void InitializeMapTimer()
+    {
+        string newMapName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        
+        // Check if this is a new map or first initialization
+        if (!mapStartTimeSet || currentMapName != newMapName)
+        {
+            mapStartTime = Time.time;
+            mapStartTimeSet = true;
+            currentMapName = newMapName;
+            isReversed = false; // Always start with normal direction on new map
+            
+            Debug.Log($"🗺️ Map timer initialized for '{currentMapName}' at {mapStartTime}");
+        }
     }
 
     void Update()
     {
+        // Check for automatic reverse every frame
+        UpdateAutoReverse();
+        
         if (isDashing)
         {
             return; // Cannot change direction while dashing
@@ -88,6 +119,41 @@ public class JetsBehaviour : MonoBehaviour
         if (Input.GetKeyDown(fireKey))
         {
             FireCurrentWeapon();
+        }
+    }
+    
+    private void UpdateAutoReverse()
+    {
+        // Calculate how many reverse intervals have passed since this map started
+        float timeSinceMapStart = Time.time - mapStartTime;
+        int reverseCount = Mathf.FloorToInt(timeSinceMapStart / reverseInterval);
+        
+        // Check if we should be reversed (odd number of intervals)
+        bool shouldBeReversed = (reverseCount % 2 == 1);
+        
+        // If reverse state changed, update it
+        if (shouldBeReversed != isReversed)
+        {
+            isReversed = shouldBeReversed;
+            
+            // Only show UI and log when reverse is activated (not when deactivated)
+            if (isReversed)
+            {
+                float timeInMap = Time.time - mapStartTime;
+                Debug.Log($"🔄 AUTO-REVERSE ACTIVATED in {currentMapName} after {timeInMap:F1}s!");
+                
+                // Show UI for reverse activation
+                if (ReverseUIManager.Instance != null)
+                {
+                    ReverseUIManager.Instance.ShowReverse();
+                }
+            }
+            else
+            {
+                float timeInMap = Time.time - mapStartTime;
+                Debug.Log($"🔄 AUTO-REVERSE DEACTIVATED in {currentMapName} after {timeInMap:F1}s!");
+                // No UI shown for deactivation
+            }
         }
     }
     
@@ -189,6 +255,9 @@ public class JetsBehaviour : MonoBehaviour
         int rotationSteps = 2;
         bool[] rotationCompleted = new bool[rotationSteps];
 
+        // Apply reverse multiplier if needed
+        float dashAngleMultiplier = isReversed ? -1f : 1f;
+
         try // ← NEW: Safety wrapper
         {
             while (Time.time < startTime + dashDuration)
@@ -196,7 +265,7 @@ public class JetsBehaviour : MonoBehaviour
                 float progress = (Time.time - startTime) / dashDuration;
                 
                 Vector3 forwardMovement = transform.up * dashSpeed * Time.deltaTime;
-                float currentAngle = Mathf.Lerp(0, dashArcAngle * Mathf.Deg2Rad, progress);
+                float currentAngle = Mathf.Lerp(0, dashArcAngle * dashAngleMultiplier * Mathf.Deg2Rad, progress);
                 float radius = dashSpeed * dashDuration / dashArcIntensity;
                 
                 Vector3 arcOffset = new Vector3(
@@ -213,7 +282,7 @@ public class JetsBehaviour : MonoBehaviour
                     float stepThreshold = (float)(i + 1) / rotationSteps;
                     if (progress >= stepThreshold && !rotationCompleted[i])
                     {
-                        float stepRotation = dashArcAngle / rotationSteps;
+                        float stepRotation = (dashArcAngle * dashAngleMultiplier) / rotationSteps;
                         transform.Rotate(0, 0, stepRotation);
                         rotationCompleted[i] = true;
                     }
@@ -237,7 +306,9 @@ public class JetsBehaviour : MonoBehaviour
 
     private void ChangeDirection()
     {   
-        transform.Rotate(0, 0, rotationAngle);
+        // Apply reverse multiplier if needed
+        float rotationMultiplier = isReversed ? -1f : 1f;
+        transform.Rotate(0, 0, rotationAngle * rotationMultiplier);
     }
 
     void OnDrawGizmos()
@@ -251,6 +322,13 @@ public class JetsBehaviour : MonoBehaviour
             // Draw search radius
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, 0.2f);
+            
+            // Draw reverse indicator
+            if (isReversed)
+            {
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawWireCube(transform.position, Vector3.one * 0.5f);
+            }
         }
     }
 
@@ -265,6 +343,32 @@ public class JetsBehaviour : MonoBehaviour
     {
         if (CanDash()) return 0f;
         return dashCooldown - (Time.time - lastDashTime);
+    }
+    
+    // NEW: Get reverse status
+    public bool IsReversed()
+    {
+        return isReversed;
+    }
+    
+    // NEW: Get time until next reverse in current map
+    public float GetTimeUntilNextReverse()
+    {
+        float timeSinceMapStart = Time.time - mapStartTime;
+        float timeInCurrentInterval = timeSinceMapStart % reverseInterval;
+        return reverseInterval - timeInCurrentInterval;
+    }
+    
+    // NEW: Get current map time
+    public float GetCurrentMapTime()
+    {
+        return Time.time - mapStartTime;
+    }
+    
+    // NEW: Get current map name
+    public string GetCurrentMapName()
+    {
+        return currentMapName;
     }
 
     private void TryStartDash() // ← NEW: Safe dash starter
@@ -293,6 +397,6 @@ public class JetsBehaviour : MonoBehaviour
         // Start new dash
         currentDashCoroutine = StartCoroutine(Dash());
         lastDashTime = Time.time;
-        Debug.Log("🚀 Dash started!");
+        Debug.Log($"🚀 Dash started! {(isReversed ? "(REVERSED)" : "(NORMAL)")}");
     }
 }

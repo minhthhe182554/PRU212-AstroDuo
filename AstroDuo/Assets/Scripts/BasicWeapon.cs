@@ -6,53 +6,54 @@ public class BasicWeapon : IWeapon
 {
     public WeaponType WeaponType => WeaponType.BasicBullet;
     
-    private int maxAmmo = 3;
-    private float bulletCooldown = 1f;
-    private float bulletSpeed = 10f;
-    private float fireDelay = 0.05f;
+    private float bulletSpeed = 15f;
+    private float fireDelay = 0.08f;
     
-    private int currentAmmo;
-    private Queue<float> bulletCooldownQueue;
     private float lastFireTime;
     
     // Track owner info
     private int ownerId = -1;
     private string ownerName = "";
-    private GameObject ownerGameObject; // NEW: Owner GameObject reference
+    private GameObject ownerGameObject;
     
     public BasicWeapon()
     {
-        currentAmmo = maxAmmo;
-        bulletCooldownQueue = new Queue<float>();
         lastFireTime = 0f;
     }
     
     public bool CanFire()
     {
-        UpdateAmmo();
-        return currentAmmo > 0 && Time.time - lastFireTime >= fireDelay;
+        // Check if enough time has passed since last fire AND if bullets are available in pool
+        bool timingOK = Time.time - lastFireTime >= fireDelay;
+        bool bulletsAvailable = GetAvailableBullets() > 0;
+        
+        return timingOK && bulletsAvailable;
     }
     
     public void Fire(Transform firePoint, Vector3 direction)
     {
         if (!CanFire()) return;
         
-        // Get bullet from pool
+        // Get bullet from player-specific pool
         if (BulletPool.Instance == null) return;
         
-        GameObject bullet = BulletPool.Instance.GetBasicBullet();
-        if (bullet == null) return;
+        GameObject bullet = BulletPool.Instance.GetBasicBullet(ownerId);
+        if (bullet == null) 
+        {
+            Debug.LogWarning($"⚠️ Player {ownerId} cannot get bullet - pool exhausted!");
+            return;
+        }
         
-        // Setup bullet
-        bullet.transform.position = firePoint.position;
-        bullet.transform.rotation = firePoint.rotation;
-        
-        // NEW: Set bullet owner with GameObject reference
+        // IMMEDIATELY set bullet owner BEFORE setting position/rotation
         BasicBulletBehaviour bulletBehaviour = bullet.GetComponent<BasicBulletBehaviour>();
         if (bulletBehaviour != null)
         {
             bulletBehaviour.SetOwner(ownerId, ownerName, ownerGameObject);
         }
+        
+        // Setup bullet position and movement AFTER owner is set
+        bullet.transform.position = firePoint.position;
+        bullet.transform.rotation = firePoint.rotation;
         
         // Fire bullet
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
@@ -61,21 +62,20 @@ public class BasicWeapon : IWeapon
             rb.linearVelocity = direction * bulletSpeed;
         }
         
-        // Update ammo
-        currentAmmo--;
-        bulletCooldownQueue.Enqueue(Time.time + bulletCooldown);
+        // Update fire timing
         lastFireTime = Time.time;
         
-        Debug.Log($"Basic bullet fired by Player {ownerId}! Ammo remaining: {currentAmmo}");
+        int remaining = GetAvailableBullets();
+        Debug.Log($"🔫 [BASIC BULLET FIRED] by Player {ownerId}! Bullets remaining in pool: {remaining}");
     }
     
-    private void UpdateAmmo()
+    private int GetAvailableBullets()
     {
-        while (bulletCooldownQueue.Count > 0 && Time.time >= bulletCooldownQueue.Peek())
+        if (BulletPool.Instance != null && ownerId != -1)
         {
-            bulletCooldownQueue.Dequeue();
-            currentAmmo++;
+            return BulletPool.Instance.GetAvailableBullets(ownerId);
         }
+        return 0;
     }
     
     public void OnEquipped(JetsBehaviour jet)
@@ -94,16 +94,16 @@ public class BasicWeapon : IWeapon
     {
         if (jet == null) return;
         
-        ownerGameObject = jet.gameObject; // NEW: Store GameObject reference
-        ownerId = jet.playerId; // NEW: Use playerId from JetsBehaviour
+        ownerGameObject = jet.gameObject;
+        ownerId = jet.playerId;
         ownerName = jet.gameObject.name;
         
-        Debug.Log($"🔧 BasicWeapon owner set: Player {ownerId} ({ownerName})");
+        Debug.Log($"🔧 [WEAPON OWNER SET] BasicWeapon owner: Player {ownerId} ({ownerName}) | GameObject: {ownerGameObject.name}");
     }
     
     public int GetCurrentAmmo()
     {
-        UpdateAmmo();
-        return currentAmmo;
+        // Return actual bullets available in pool
+        return GetAvailableBullets();
     }
 }

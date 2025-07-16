@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PowerUp : MonoBehaviour
 {
-    [SerializeField] private WeaponType weaponType;
+    [SerializeField] private WeaponType weaponType; 
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private float rotationSpeed = 50f; 
     
@@ -49,8 +49,6 @@ public class PowerUp : MonoBehaviour
                 return new LaserWeapon();
             case WeaponType.Mine:
                 return new MineWeapon();
-            case WeaponType.Reverse:
-                return new ReverseWeapon();
             case WeaponType.Saber:
                 return new SaberWeapon();
             case WeaponType.ScatterShot:
@@ -83,17 +81,6 @@ public class MineWeapon : SingleUseWeapon
     {
         Debug.Log("💣 MINE DEPLOYED! *strategic placement*");
         // TODO: Implement mine deployment logic later
-    }
-}
-
-public class ReverseWeapon : SingleUseWeapon
-{
-    public override WeaponType WeaponType => WeaponType.Reverse;
-    
-    protected override void ExecuteFire(Transform firePoint, Vector3 direction)
-    {
-        Debug.Log("🔄 REVERSE SHOT! *backwards projectile*");
-        // TODO: Implement reverse shot logic later
     }
 }
 
