@@ -301,7 +301,21 @@ public class JetsBehaviour : MonoBehaviour
 
     private void AutoMoveForward() 
     {   
-        transform.Translate(Vector2.up * speed * Time.deltaTime);
+        // Tính toán base speed với wind effect
+        float effectiveSpeed = speed;
+        
+        // Áp dụng wind effect nếu có WindBehaviour
+        if (WindBehaviour.Instance != null)
+        {
+            Vector2 jetDirection = transform.up; // Hướng di chuyển của jet
+            float windEffect = WindBehaviour.Instance.GetWindEffect(jetDirection);
+            effectiveSpeed += windEffect;
+            
+            // Đảm bảo speed không bao giờ âm hoặc quá thấp
+            effectiveSpeed = Mathf.Max(effectiveSpeed, speed * 0.1f);
+        }
+        
+        transform.Translate(Vector2.up * effectiveSpeed * Time.deltaTime);
     }
 
     private void ChangeDirection()
