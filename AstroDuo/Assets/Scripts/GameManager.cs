@@ -42,6 +42,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float spinSpeed = 720f; // Degrees per second
     [SerializeField] private float spinDuration = 0.5f; // Half second spin
 
+    [Header("Shield Support System")]
+    [SerializeField] private int shieldSupportThreshold = 3; // 3 điểm cách biệt
+
     void Awake() 
     {
         if (Instance == null)
@@ -390,6 +393,72 @@ public class GameManager : MonoBehaviour
         }
         
         Debug.Log($"🌪️ [SPIN END] Spin animation completed for {sprite.name}");
+    }
+
+    // NEW: Check if any player needs shield support
+    public bool ShouldGiveShieldSupport(int playerId)
+    {
+        if (!ShieldSupport) return false;
+        
+        int player1Score = Player1Score;
+        int player2Score = Player2Score;
+        
+        // Player 1 needs shield if Player 2 leads by 3+ points
+        if (playerId == 1 && (player2Score - player1Score) >= shieldSupportThreshold)
+        {
+            Debug.Log($"🛡️ Player 1 needs shield support! Score gap: {player2Score - player1Score}");
+            return true;
+        }
+        
+        // Player 2 needs shield if Player 1 leads by 3+ points  
+        if (playerId == 2 && (player1Score - player2Score) >= shieldSupportThreshold)
+        {
+            Debug.Log($"🛡️ Player 2 needs shield support! Score gap: {player1Score - player2Score}");
+            return true;
+        }
+        
+        return false;
+    }
+
+    // NEW: Get effective starting powerups setting (considering priorities)
+    public bool GetEffectiveStartingPowerUps(int playerId)
+    {
+        // Priority 1: Shield Support overrides everything
+        if (ShouldGiveShieldSupport(playerId))
+        {
+            Debug.Log($"🛡️ Player {playerId} gets shield support (overrides starting powerups)");
+            return false; // Shield support thay thế starting powerups
+        }
+        
+        // Priority 2: If PowerUps disabled, no starting powerups
+        if (!PowerUps)
+        {
+            Debug.Log($"⚠️ PowerUps disabled - no starting powerups for Player {playerId}");
+            return false;
+        }
+        
+        // Priority 3: Normal starting powerups setting
+        return StartingPowerUps;
+    }
+
+    // NEW: Get starting weapon for player
+    public WeaponType? GetStartingWeapon(int playerId)
+    {
+        // Shield Support has highest priority
+        if (ShouldGiveShieldSupport(playerId))
+        {
+            return WeaponType.Shield;
+        }
+        
+        // If powerups disabled or no starting powerups, return null
+        if (!GetEffectiveStartingPowerUps(playerId))
+        {
+            return null;
+        }
+        
+        // Random starting powerup
+        WeaponType[] availableTypes = { WeaponType.Saber, WeaponType.ScatterShot, WeaponType.Shield };
+        return availableTypes[Random.Range(0, availableTypes.Length)];
     }
 }
 

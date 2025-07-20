@@ -372,8 +372,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3286690122257618907, guid: 56fcaae28851eb043b760620bee8990b, type: 3}
       propertyPath: rotationAngle
-      value: 20
+      value: 60
       objectReference: {fileID: 0}
+    - target: {fileID: 3286690122257618907, guid: 56fcaae28851eb043b760620bee8990b, type: 3}
+      propertyPath: rotationSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 3286690122257618907, guid: 56fcaae28851eb043b760620bee8990b, type: 3}
+      propertyPath: scatterBulletPrefab
+      value: 
+      objectReference: {fileID: 1526093377938241327, guid: e2d40a9fa4924e3489a85d9c35e45448, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -766,6 +774,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1174186959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1174186961}
+  - component: {fileID: 1174186960}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1174186960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1174186959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82e3aac800475f043aafb30e189dcbb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musicSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  loopSource: {fileID: 0}
+  backgroundMusic: {fileID: 0}
+  basicBulletSound: {fileID: 0}
+  scatterShotSound: {fileID: 0}
+  saberActivateSound: {fileID: 0}
+  shieldActivateSound: {fileID: 0}
+  playerDeathSound: {fileID: 0}
+--- !u!4 &1174186961
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1174186959}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.91431177, y: 0.1307781, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1218325332
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,8 +1145,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3286690122257618907, guid: 56fcaae28851eb043b760620bee8990b, type: 3}
       propertyPath: rotationAngle
-      value: 20
+      value: 60
       objectReference: {fileID: 0}
+    - target: {fileID: 3286690122257618907, guid: 56fcaae28851eb043b760620bee8990b, type: 3}
+      propertyPath: rotationSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 3286690122257618907, guid: 56fcaae28851eb043b760620bee8990b, type: 3}
+      propertyPath: scatterBulletPrefab
+      value: 
+      objectReference: {fileID: 1526093377938241327, guid: e2d40a9fa4924e3489a85d9c35e45448, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3030,8 +3099,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   powerUpPrefabs:
-  - {fileID: 9179883466458269572, guid: 7d2c856733358e843a175d56ba69b3d4, type: 3}
-  - {fileID: 5374686337356394006, guid: 71a425a4cd49109438b6705f77170d1d, type: 3}
   - {fileID: 3237325085199083604, guid: 7ed64a0c22501044484bdd78444e1dad, type: 3}
   - {fileID: 3165964415818096858, guid: ec855f4169dbd964d992769cf86ce7e5, type: 3}
   - {fileID: 1579073784984600758, guid: 43c7c9dacfe219d429479f553fccfb3c, type: 3}
@@ -3087,3 +3154,4 @@ SceneRoots:
   - {fileID: 2001115253}
   - {fileID: 588548862}
   - {fileID: 1882781368}
+  - {fileID: 1174186961}

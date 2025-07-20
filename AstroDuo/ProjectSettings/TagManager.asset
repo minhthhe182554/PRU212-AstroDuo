@@ -18,6 +18,8 @@ TagManager:
   - Mine
   - Shield
   - TurretBullet
+  - Player1ScatterBullet
+  - Player2ScatterBullet
   layers:
   - Default
   - TransparentFX

@@ -27,6 +27,10 @@ public class JetsBehaviour : MonoBehaviour
     [Header("Weapon System")]
     [SerializeField] private Transform firePoint;
 
+    [Header("Speed Boost System")]
+    private float originalSpeed;
+    private bool hasSpeedBoost = false;
+    
     private float lastLeftArrowPressTime;
     private bool isDashing = false;
     private Coroutine currentDashCoroutine; // ← NEW: Track current dash
@@ -41,6 +45,15 @@ public class JetsBehaviour : MonoBehaviour
     // Weapon system
     private IWeapon currentWeapon;
     private BasicWeapon basicWeapon;
+    
+    [Header("Weapon Prefabs")]
+    [SerializeField] private GameObject scatterBulletPrefab;
+
+    // NEW: Method để get prefab
+    public GameObject GetScatterBulletPrefab()
+    {
+        return scatterBulletPrefab;
+    }
     
     void Start()
     {
@@ -67,6 +80,12 @@ public class JetsBehaviour : MonoBehaviour
         
         // Initialize map timer (resets for each new map)
         InitializeMapTimer();
+        
+        // Store original speed
+        originalSpeed = speed;
+        
+        // Handle starting powerups/shield support
+        HandleStartingEquipment();
         
         Debug.Log($"🚀 Player {playerId} ({gameObject.name}) initialized!");
     }
@@ -204,6 +223,25 @@ public class JetsBehaviour : MonoBehaviour
         }
     }
     
+    // NEW: Method để cleanup tất cả weapon effects
+    public void CleanupAllWeaponEffects()
+    {
+        // Disable sabers
+        Transform leftSaber = transform.Find("LeftSaber");
+        Transform rightSaber = transform.Find("RightSaber");
+        if (leftSaber != null) leftSaber.gameObject.SetActive(false);
+        if (rightSaber != null) rightSaber.gameObject.SetActive(false);
+        
+        // Disable shield
+        Transform shield = transform.Find("Shield");
+        if (shield != null) shield.gameObject.SetActive(false);
+        
+        // Reset speed boost
+        ResetSpeedBoost();
+        
+        Debug.Log("🧹 All weapon effects cleaned up!");
+    }
+
     public void EquipWeapon(IWeapon newWeapon)
     {
         if (newWeapon == null) 
@@ -213,6 +251,9 @@ public class JetsBehaviour : MonoBehaviour
         }
         
         WeaponType oldWeaponType = currentWeapon?.WeaponType ?? WeaponType.BasicBullet;
+        
+        // CLEANUP OLD EFFECTS BEFORE EQUIPPING NEW
+        CleanupAllWeaponEffects();
         
         // Unequip current weapon (if it's not basic weapon)
         if (currentWeapon != null && currentWeapon != basicWeapon)
@@ -442,5 +483,97 @@ public class JetsBehaviour : MonoBehaviour
         isReversed = false;
         currentMapName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         Debug.Log($"🔄 [FORCE RESET] Reverse timer reset for {currentMapName}");
+    }
+
+    public void ApplySpeedBoost(float multiplier)
+    {
+        if (!hasSpeedBoost)
+        {
+            speed = originalSpeed * multiplier;
+            hasSpeedBoost = true;
+            Debug.Log($"🚀 Speed boost applied! {originalSpeed} → {speed} (x{multiplier})");
+        }
+    }
+    
+    public void ResetSpeedBoost()
+    {
+        if (hasSpeedBoost)
+        {
+            speed = originalSpeed;
+            hasSpeedBoost = false;
+            Debug.Log($"🚀 Speed boost removed! Back to {speed}");
+        }
+    }
+
+    // NEW METHOD: Switch về basic weapon nhưng giữ effects
+    public void SwitchToBasicWeaponKeepEffects()
+    {
+        // Không call OnUnequipped() để giữ sabers/shield active
+        currentWeapon = basicWeapon;
+        Debug.Log($"🔄 SWITCHED TO BASIC (keeping effects active)");
+    }
+
+    // NEW: Handle starting equipment based on settings
+    private void HandleStartingEquipment()
+    {
+        if (GameManager.Instance == null) return;
+        
+        // Check for shield support first (highest priority)
+        if (GameManager.Instance.ShouldGiveShieldSupport(playerId))
+        {
+            Debug.Log($"🛡️ Player {playerId} receives shield support!");
+            GiveShieldSupport();
+            return;
+        }
+        
+        // Check for starting powerups
+        WeaponType? startingWeapon = GameManager.Instance.GetStartingWeapon(playerId);
+        if (startingWeapon.HasValue)
+        {
+            Debug.Log($"🎁 Player {playerId} receives starting powerup: {startingWeapon.Value}");
+            GiveStartingPowerUp(startingWeapon.Value);
+        }
+    }
+
+    // NEW: Give shield support (auto-activated)
+    private void GiveShieldSupport()
+    {
+        IWeapon shieldWeapon = new ShieldWeapon();
+        EquipWeapon(shieldWeapon);
+        
+        // Auto-activate shield
+        if (currentWeapon.CanFire())
+        {
+            currentWeapon.Fire(firePoint, transform.up);
+            Debug.Log($"🛡️ Shield support auto-activated for Player {playerId}!");
+        }
+    }
+
+    // NEW: Give starting powerup (not activated)
+    private void GiveStartingPowerUp(WeaponType weaponType)
+    {
+        IWeapon weapon = CreateWeaponByType(weaponType);
+        if (weapon != null)
+        {
+            EquipWeapon(weapon);
+            Debug.Log($"🎁 Player {playerId} equipped with {weaponType} (press fire to activate)");
+        }
+    }
+
+    // NEW: Create weapon by type
+    private IWeapon CreateWeaponByType(WeaponType type)
+    {
+        switch (type)
+        {
+            case WeaponType.Saber:
+                return new SaberWeapon();
+            case WeaponType.ScatterShot:
+                return new ScatterWeapon();
+            case WeaponType.Shield:
+                return new ShieldWeapon();
+            default:
+                Debug.LogWarning($"⚠️ Unsupported starting weapon type: {type}");
+                return null;
+        }
     }
 }
