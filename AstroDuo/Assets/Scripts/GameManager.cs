@@ -177,6 +177,10 @@ public class GameManager : MonoBehaviour
         PreviousPlayer1Score = 0;
         PreviousPlayer2Score = 0;
         ClearTurretPenaltyFlags(); // Clear penalty flags
+        
+        // NEW: Force reset reverse timer when starting new game
+        JetsBehaviour.ForceResetReverseTimer();
+        
         Debug.Log("🔄 Scores reset for new game session");
     }
 

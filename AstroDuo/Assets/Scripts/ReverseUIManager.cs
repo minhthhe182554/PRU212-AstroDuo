@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using System.Collections;
 
 public class ReverseUIManager : MonoBehaviour
@@ -8,12 +7,11 @@ public class ReverseUIManager : MonoBehaviour
     public static ReverseUIManager Instance { get; private set; }
     
     [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI reverseText;
-    [SerializeField] private string reverseTextObjectName = "ReverseText";
+    [SerializeField] private Image reverseImage;
+    [SerializeField] private string reverseImageObjectName = "Reverse";
     
     [Header("Display Settings")]
     [SerializeField] private float displayDuration = 2f;
-    [SerializeField] private string reverseMessage = "REVERSE";
     
     private Coroutine displayCoroutine;
     private bool isDisplaying = false;
@@ -33,52 +31,52 @@ public class ReverseUIManager : MonoBehaviour
     
     void Start()
     {
-        FindReverseText();
+        FindReverseImage();
         
-        // Initially hide the text
-        if (reverseText != null)
+        // Initially hide the image
+        if (reverseImage != null)
         {
-            reverseText.gameObject.SetActive(false);
+            reverseImage.gameObject.SetActive(false);
         }
     }
     
     void OnLevelWasLoaded(int level)
     {
-        // Find the ReverseText in the new scene
-        FindReverseText();
+        // Find the ReverseImage in the new scene
+        FindReverseImage();
     }
     
-    private void FindReverseText()
+    private void FindReverseImage()
     {
-        // Try to find ReverseText by name
-        GameObject reverseTextObj = GameObject.Find(reverseTextObjectName);
+        // Try to find ReverseImage by name
+        GameObject reverseImageObj = GameObject.Find(reverseImageObjectName);
         
-        if (reverseTextObj != null)
+        if (reverseImageObj != null)
         {
-            reverseText = reverseTextObj.GetComponent<TextMeshProUGUI>();
+            reverseImage = reverseImageObj.GetComponent<Image>();
             
-            if (reverseText != null)
+            if (reverseImage != null)
             {
-                // Initially hide the text
-                reverseText.gameObject.SetActive(false);
-                Debug.Log($"✅ Found ReverseText UI: {reverseTextObj.name}");
+                // Initially hide the image
+                reverseImage.gameObject.SetActive(false);
+                Debug.Log($"✅ Found ReverseImage UI: {reverseImageObj.name}");
             }
             else
             {
-                Debug.LogWarning($"⚠️ ReverseText GameObject found but no TextMeshProUGUI component!");
+                Debug.LogWarning($"⚠️ ReverseImage GameObject found but no Image component!");
             }
         }
         else
         {
-            Debug.LogWarning($"⚠️ ReverseText GameObject '{reverseTextObjectName}' not found in scene!");
+            Debug.LogWarning($"⚠️ ReverseImage GameObject '{reverseImageObjectName}' not found in scene!");
         }
     }
     
     public void ShowReverse()
     {
-        if (reverseText == null)
+        if (reverseImage == null)
         {
-            Debug.LogWarning("⚠️ ReverseText UI not found! Cannot display message.");
+            Debug.LogWarning("⚠️ ReverseImage UI not found! Cannot display image.");
             return;
         }
         
@@ -96,19 +94,18 @@ public class ReverseUIManager : MonoBehaviour
     {
         isDisplaying = true;
         
-        // Set the text and show it
-        reverseText.text = reverseMessage;
-        reverseText.gameObject.SetActive(true);
+        // Show the image
+        reverseImage.gameObject.SetActive(true);
         
-        Debug.Log($"🔄 Displaying REVERSE for {displayDuration} seconds");
+        Debug.Log($"🔄 Displaying REVERSE image for {displayDuration} seconds");
         
         // Wait for the display duration
         yield return new WaitForSeconds(displayDuration);
         
-        // Hide the text
-        reverseText.gameObject.SetActive(false);
+        // Hide the image
+        reverseImage.gameObject.SetActive(false);
         
-        Debug.Log($"✅ REVERSE message hidden after {displayDuration} seconds");
+        Debug.Log($"✅ REVERSE image hidden after {displayDuration} seconds");
         
         isDisplaying = false;
         displayCoroutine = null;
@@ -124,8 +121,12 @@ public class ReverseUIManager : MonoBehaviour
         displayDuration = duration;
     }
     
-    public void SetReverseMessage(string message)
+    // NEW: Method to change the reverse image sprite if needed
+    public void SetReverseSprite(Sprite newSprite)
     {
-        reverseMessage = message;
+        if (reverseImage != null)
+        {
+            reverseImage.sprite = newSprite;
+        }
     }
 } 

@@ -9,6 +9,7 @@ public class JetsBehaviour : MonoBehaviour
     [Header("Movement")]
     [SerializeField] public float speed = 2f;
     [SerializeField] public float rotationAngle = 20f;
+    [SerializeField] private float rotationSpeed = 90f; // NEW: Degrees per second for continuous rotation
     
     [Header("Dash")]
     [SerializeField] private float dashSpeed = 8f; 
@@ -21,7 +22,7 @@ public class JetsBehaviour : MonoBehaviour
     [SerializeField] private KeyCode fireKey = KeyCode.UpArrow; 
 
     [Header("Auto Reverse System")]
-    [SerializeField] private float reverseInterval = 20f; // 20 seconds
+    [SerializeField] private float reverseInterval = 15f; // 15 seconds như bạn muốn
 
     [Header("Weapon System")]
     [SerializeField] private Transform firePoint;
@@ -82,7 +83,7 @@ public class JetsBehaviour : MonoBehaviour
             currentMapName = newMapName;
             isReversed = false; // Always start with normal direction on new map
             
-            Debug.Log($"🗺️ Map timer initialized for '{currentMapName}' at {mapStartTime}");
+            Debug.Log($"🗺️ Map timer initialized for '{currentMapName}' at {mapStartTime} (15s intervals)");
         }
     }
 
@@ -98,28 +99,46 @@ public class JetsBehaviour : MonoBehaviour
 
         AutoMoveForward();
 
-        // Movement input
-        if (Input.GetKeyDown(moveKey))
-        {
-            // click 2 times - Dash
-            if (Time.time - lastLeftArrowPressTime < doubleTapTimeThreshold)
-            {
-                TryStartDash(); // ← NEW: Use safe dash method
-            }
-            else
-            {
-                // If only click 1 time, rotate
-                ChangeDirection();
-            }
-
-            lastLeftArrowPressTime = Time.time;
-        }
+        // NEW: Handle movement input - continuous rotation when held, dash on double-tap
+        HandleMovementInput();
         
         // Fire input
         if (Input.GetKeyDown(fireKey))
         {
             FireCurrentWeapon();
         }
+    }
+    
+    // NEW: Separate method to handle movement input
+    private void HandleMovementInput()
+    {
+        // Check for key press (for double-tap detection)
+        if (Input.GetKeyDown(moveKey))
+        {
+            // Check for double-tap (dash)
+            if (Time.time - lastLeftArrowPressTime < doubleTapTimeThreshold)
+            {
+                TryStartDash();
+                return; // Don't process rotation if dashing
+            }
+            
+            lastLeftArrowPressTime = Time.time;
+        }
+        
+        // Continuous rotation when key is held
+        if (Input.GetKey(moveKey))
+        {
+            ChangeDirectionContinuous();
+        }
+    }
+    
+    // NEW: Continuous rotation method
+    private void ChangeDirectionContinuous()
+    {
+        // Apply reverse multiplier if needed
+        float rotationMultiplier = isReversed ? -1f : 1f;
+        float rotationThisFrame = rotationSpeed * rotationMultiplier * Time.deltaTime;
+        transform.Rotate(0, 0, rotationThisFrame);
     }
     
     private void UpdateAutoReverse()
@@ -318,6 +337,7 @@ public class JetsBehaviour : MonoBehaviour
         transform.Translate(Vector2.up * effectiveSpeed * Time.deltaTime);
     }
 
+    // DEPRECATED: Old discrete rotation method (kept for reference)
     private void ChangeDirection()
     {   
         // Apply reverse multiplier if needed
@@ -412,5 +432,15 @@ public class JetsBehaviour : MonoBehaviour
         currentDashCoroutine = StartCoroutine(Dash());
         lastDashTime = Time.time;
         Debug.Log($"🚀 Dash started! {(isReversed ? "(REVERSED)" : "(NORMAL)")}");
+    }
+
+    // NEW: Force reset static variables (call này từ GameManager khi cần)
+    public static void ForceResetReverseTimer()
+    {
+        mapStartTime = Time.time;
+        mapStartTimeSet = true;
+        isReversed = false;
+        currentMapName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        Debug.Log($"🔄 [FORCE RESET] Reverse timer reset for {currentMapName}");
     }
 }

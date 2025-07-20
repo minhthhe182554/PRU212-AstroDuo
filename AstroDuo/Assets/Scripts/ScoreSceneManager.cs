@@ -136,15 +136,11 @@ public class ScoreSceneManager : MonoBehaviour
         {
             if (player1TurretPenalty)
             {
-                // Turret penalty: spin animation instead of movement
-                Vector3 targetPos = player1BasePosition + Vector3.right * (player1CurrentScore * moveDistance);
-                player1Sprite.position = targetPos; // Set position immediately
-                StartCoroutine(SpinAnimation(player1Sprite)); // Add spin animation
-                Debug.Log($"🌪️ Player 1 turret penalty - performing spin animation!");
+                HandlePenaltyAnimation(player1Sprite, player1PreviousScore, player1CurrentScore, player1BasePosition, "Player 1");
             }
             else
             {
-                // Normal movement animation
+                // Normal movement animation (gaining points)
                 Vector3 startPos = player1BasePosition + Vector3.right * (player1PreviousScore * moveDistance);
                 Vector3 targetPos = player1BasePosition + Vector3.right * (player1CurrentScore * moveDistance);
                 
@@ -158,21 +154,50 @@ public class ScoreSceneManager : MonoBehaviour
         {
             if (player2TurretPenalty)
             {
-                // Turret penalty: spin animation instead of movement
-                Vector3 targetPos = player2BasePosition + Vector3.right * (player2CurrentScore * moveDistance);
-                player2Sprite.position = targetPos; // Set position immediately
-                StartCoroutine(SpinAnimation(player2Sprite)); // Add spin animation
-                Debug.Log($"🌪️ Player 2 turret penalty - performing spin animation!");
+                HandlePenaltyAnimation(player2Sprite, player2PreviousScore, player2CurrentScore, player2BasePosition, "Player 2");
             }
             else
             {
-                // Normal movement animation
+                // Normal movement animation (gaining points)
                 Vector3 startPos = player2BasePosition + Vector3.right * (player2PreviousScore * moveDistance);
                 Vector3 targetPos = player2BasePosition + Vector3.right * (player2CurrentScore * moveDistance);
                 
                 player2Sprite.position = startPos;
                 StartCoroutine(MoveToPosition(player2Sprite, targetPos));
             }
+        }
+    }
+    
+    // NEW: Handle penalty animation logic
+    private void HandlePenaltyAnimation(Transform sprite, int previousScore, int currentScore, Vector3 basePosition, string playerName)
+    {
+        if (previousScore > 0 && currentScore < previousScore)
+        {
+            // Case 1: Player had points and lost some → spin + move backwards
+            Vector3 startPos = basePosition + Vector3.right * (previousScore * moveDistance);
+            Vector3 targetPos = basePosition + Vector3.right * (currentScore * moveDistance);
+            
+            sprite.position = startPos;
+            StartCoroutine(SpinAndMoveToPosition(sprite, targetPos));
+            Debug.Log($"🌪️➡️ {playerName} penalty: spin + move backwards from {previousScore} to {currentScore}!");
+        }
+        else if (previousScore == 0)
+        {
+            // Case 2: Player had 0 points and got penalty → only spin in place
+            Vector3 targetPos = basePosition + Vector3.right * (currentScore * moveDistance);
+            sprite.position = targetPos; // Set position immediately (should be same as before)
+            StartCoroutine(SpinAnimation(sprite));
+            Debug.Log($"🌪️ {playerName} penalty at 0 points: spin in place only!");
+        }
+        else
+        {
+            // Fallback: unexpected case, just do normal movement
+            Vector3 startPos = basePosition + Vector3.right * (previousScore * moveDistance);
+            Vector3 targetPos = basePosition + Vector3.right * (currentScore * moveDistance);
+            
+            sprite.position = startPos;
+            StartCoroutine(MoveToPosition(sprite, targetPos));
+            Debug.LogWarning($"⚠️ {playerName} unexpected penalty case: previous={previousScore}, current={currentScore}");
         }
     }
     
@@ -195,12 +220,10 @@ public class ScoreSceneManager : MonoBehaviour
         sprite.position = targetPosition;
     }
 
-    // NEW: Spin animation coroutine
+    // NEW: Spin animation only
     private IEnumerator SpinAnimation(Transform sprite)
     {
         float elapsed = 0f;
-        float totalRotation = spinSpeed * spinDuration;
-        Vector3 startRotation = sprite.eulerAngles;
         
         Debug.Log($"🌪️ [SPIN START] Starting spin animation for {sprite.name}");
         
@@ -215,6 +238,35 @@ public class ScoreSceneManager : MonoBehaviour
         }
         
         Debug.Log($"🌪️ [SPIN END] Spin animation completed for {sprite.name}");
+    }
+    
+    // NEW: Spin while moving animation
+    private IEnumerator SpinAndMoveToPosition(Transform sprite, Vector3 targetPosition)
+    {
+        Vector3 startPosition = sprite.position;
+        float elapsed = 0f;
+        
+        Debug.Log($"🌪️➡️ [SPIN+MOVE START] Starting spin and move animation for {sprite.name}");
+        
+        while (elapsed < animationDuration)
+        {
+            elapsed += Time.deltaTime;
+            float progress = elapsed / animationDuration;
+            
+            // Move towards target
+            sprite.position = Vector3.Lerp(startPosition, targetPosition, progress);
+            
+            // Spin during movement
+            float rotationThisFrame = spinSpeed * Time.deltaTime;
+            sprite.Rotate(0, 0, rotationThisFrame);
+            
+            yield return null;
+        }
+        
+        // Ensure exact final position
+        sprite.position = targetPosition;
+        
+        Debug.Log($"🌪️➡️ [SPIN+MOVE END] Spin and move animation completed for {sprite.name}");
     }
     
     // PUBLIC METHOD - Call này để force update nếu cần

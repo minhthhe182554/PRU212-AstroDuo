@@ -3,7 +3,7 @@ using UnityEngine;
 public class WindBehaviour : MonoBehaviour
 {
     [Header("Wind Settings")]
-    [SerializeField] private float maxWindStrength = 15f; // Tốc độ gió tối đa
+    [SerializeField] private float maxWindStrength = 5f; // Tốc độ gió tối đa
     [SerializeField] private Vector2 windDirection; // Hướng gió (normalized)
     [SerializeField] private float windStrength; // Cường độ gió hiện tại
     
@@ -52,9 +52,9 @@ public class WindBehaviour : MonoBehaviour
     {
         if (windIndicator != null)
         {
-            // Xoay sprite theo hướng gió
-            float angle = Mathf.Atan2(windDirection.x, windDirection.y) * Mathf.Rad2Deg;
-            windIndicator.transform.rotation = Quaternion.Euler(0, 0, -angle);
+            // Xoay sprite theo hướng gió - FIX cho sprite hướng phải ban đầu
+            float angle = Mathf.Atan2(windDirection.y, windDirection.x) * Mathf.Rad2Deg;
+            windIndicator.transform.rotation = Quaternion.Euler(0, 0, angle);
             
             // Scale chiều Y theo wind strength
             float scaleY = Mathf.Lerp(minScale, maxScale, windStrength / maxWindStrength);
@@ -75,21 +75,22 @@ public class WindBehaviour : MonoBehaviour
     {
         if (jetDirection.magnitude == 0) return 0f;
         
-        // Tính dot product để xác định jet bay xuôi hay ngược gió
+        // Tính dot product để xác định góc giữa hướng jet và hướng gió
         float dotProduct = Vector2.Dot(jetDirection.normalized, windDirection);
         
-        // Tính absolute value để xác định mức độ alignment với hướng gió
-        float absDotProduct = Mathf.Abs(dotProduct);
-        
-        if (absDotProduct >= 0.7f) // Gần như cùng hướng hoặc ngược hướng (>45 độ alignment)
+        if (dotProduct >= 0.707f) // 0-45 độ: Cùng hướng hoặc gần cùng hướng
         {
-            // dotProduct > 0: cùng hướng (xuôi gió) → bonus speed
-            // dotProduct < 0: ngược hướng (ngược gió) → penalty speed
-            return dotProduct * windStrength;
+            // Bay cùng hướng gió → bonus full speed
+            return windStrength;
         }
-        else // Vuông góc hoặc gần vuông góc với hướng gió
+        else if (dotProduct >= 0f) // 45-90 độ: Hơi lệch hướng gió
         {
-            // Bay vuông góc với gió luôn bị penalty = 1/2 wind strength
+            // Bay hơi lệch hướng gió → bonus 1/2 speed
+            return windStrength * 0.5f;
+        }
+        else // 90-180 độ: Vuông góc hoặc ngược hướng gió
+        {
+            // Bay vuông góc hoặc ngược gió → penalty 1/2 speed
             return -windStrength * 0.5f;
         }
     }
@@ -123,7 +124,7 @@ public class WindBehaviour : MonoBehaviour
     {
         GenerateRandomWind();
         UpdateWindVisual();
-        Debug.Log($"🔄 Wind regenerated - Direction: {windDirection}, Strength: {windStrength}");
+        Debug.Log($"�� Wind regenerated - Direction: {windDirection}, Strength: {windStrength}");
     }
     
     // Getter methods
