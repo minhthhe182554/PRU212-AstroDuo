@@ -11,7 +11,6 @@ public static class GameConst
     public const string MAP_1 = "Map1";
     public const string MAP_2 = "Map2";
     public const string MAP_4 = "Map4";
-    public const string MAP_5 = "Map5";
     public const string MAP_6 = "Map6";
     public const string WINNER_SCENE = "WinnerScene";
     
@@ -21,7 +20,6 @@ public static class GameConst
         MAP_1,
         MAP_2,
         MAP_4,
-        MAP_5,
         MAP_6
     };
 }

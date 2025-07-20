@@ -82,4 +82,32 @@ public class UIControl : MonoBehaviour
             Debug.LogError("GameManager Instance not found!");
         }
     }
+
+    // NEW: Play Again method for WinnerScene
+    public void PlayAgain()
+    {
+        // Play button-click sound here
+        
+        if (GameManager.Instance != null)
+        {
+            // Reset scores and game state completely
+            GameManager.Instance.ResetScores();
+            
+            // Clear any penalty flags
+            GameManager.Instance.ClearTurretPenaltyFlags();
+            
+            // Optional: Reset skins to default (uncomment if you want this)
+            // GameManager.Instance.InitializeDefaultSkins();
+            
+            Debug.Log("🔄 Game reset! Returning to Main Menu");
+            
+            // Return to Main Scene
+            SceneManager.LoadScene(GameConst.MAIN_SCENE);
+        }
+        else
+        {
+            Debug.LogError("GameManager Instance not found! Loading Main Scene anyway.");
+            SceneManager.LoadScene(GameConst.MAIN_SCENE);
+        }
+    }
 }

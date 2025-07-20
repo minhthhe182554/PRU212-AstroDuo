@@ -425,6 +425,8 @@ MonoBehaviour:
   - {fileID: -260211707230018455, guid: 93856c82ad5cbdc4a96e62e14b3891f3, type: 3}
   - {fileID: -8349918657026678835, guid: 93856c82ad5cbdc4a96e62e14b3891f3, type: 3}
   - {fileID: 122608806077873892, guid: 93856c82ad5cbdc4a96e62e14b3891f3, type: 3}
+  spinSpeed: 720
+  spinDuration: 0.5
 --- !u!4 &813195430
 Transform:
   m_ObjectHideFlags: 0
