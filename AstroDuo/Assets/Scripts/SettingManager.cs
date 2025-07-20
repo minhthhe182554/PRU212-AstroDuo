@@ -46,7 +46,6 @@ public class SettingManager : MonoBehaviour
     
     private void SaveSettings()
     {
-        // Play button-click sound here
         if (GameManager.Instance != null)
         {
             GameManager.Instance.UpdateSettings(
@@ -58,7 +57,6 @@ public class SettingManager : MonoBehaviour
             );
             
             Debug.Log("Settings saved!");
-
             GoBackToMainScene();
         }
     }

@@ -677,8 +677,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   powerUpPrefabs:
-  - {fileID: 9179883466458269572, guid: 7d2c856733358e843a175d56ba69b3d4, type: 3}
-  - {fileID: 5374686337356394006, guid: 71a425a4cd49109438b6705f77170d1d, type: 3}
   - {fileID: 3237325085199083604, guid: 7ed64a0c22501044484bdd78444e1dad, type: 3}
   - {fileID: 3165964415818096858, guid: ec855f4169dbd964d992769cf86ce7e5, type: 3}
   - {fileID: 1579073784984600758, guid: 43c7c9dacfe219d429479f553fccfb3c, type: 3}

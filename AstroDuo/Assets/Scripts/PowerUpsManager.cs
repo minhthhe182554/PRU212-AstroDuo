@@ -36,10 +36,8 @@ public class PowerUpsManager : MonoBehaviour
     private int currentPowerUpCount = 0;
     private List<GameObject> activePowerUps = new List<GameObject>();
     
-    // Available weapon types (excluding Reverse)
+    // Available weapon types (chỉ giữ lại 3 loại)
     private WeaponType[] availableWeaponTypes = {
-        WeaponType.Laser,
-        WeaponType.Mine,
         WeaponType.Saber,
         WeaponType.ScatterShot,
         WeaponType.Shield
@@ -47,6 +45,14 @@ public class PowerUpsManager : MonoBehaviour
     
     void Start()
     {
+        // Check if powerups should be enabled
+        if (GameManager.Instance != null && !GameManager.Instance.PowerUps)
+        {
+            Debug.Log("⚠️ PowerUps disabled in settings - PowerUpsManager will not spawn");
+            gameObject.SetActive(false);
+            return;
+        }
+        
         InitializePowerUpSystem();
     }
     
@@ -406,6 +412,24 @@ public class PowerUpsManager : MonoBehaviour
                     Gizmos.DrawWireSphere(powerUp.transform.position, checkRadius);
                 }
             }
+        }
+    }
+
+    // NEW: Method to disable powerup spawning mid-game
+    public void SetPowerUpsEnabled(bool enabled)
+    {
+        if (enabled)
+        {
+            gameObject.SetActive(true);
+            Debug.Log("✅ PowerUps enabled - resuming spawn");
+        }
+        else
+        {
+            // Stop all spawning and clear existing powerups
+            StopAllCoroutines();
+            ClearAllPowerUps();
+            gameObject.SetActive(false);
+            Debug.Log("❌ PowerUps disabled - stopped spawning");
         }
     }
 }

@@ -155,6 +155,8 @@ MonoBehaviour:
   moveDistance: 5
   animationDuration: 1
   scoreDisplayTime: 5
+  spinSpeed: 720
+  spinDuration: 0.5
 --- !u!4 &117050845
 Transform:
   m_ObjectHideFlags: 0
@@ -200,6 +202,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   availableSkins: []
+  spinSpeed: 720
+  spinDuration: 0.5
 --- !u!4 &428419047
 Transform:
   m_ObjectHideFlags: 0
@@ -302,6 +306,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 270}
+--- !u!1 &1160976642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1160976644}
+  - component: {fileID: 1160976643}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1160976643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160976642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82e3aac800475f043aafb30e189dcbb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musicSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  loopSource: {fileID: 0}
+  backgroundMusic: {fileID: 0}
+  basicBulletSound: {fileID: 0}
+  scatterShotSound: {fileID: 0}
+  saberActivateSound: {fileID: 0}
+  shieldActivateSound: {fileID: 0}
+  playerDeathSound: {fileID: 0}
+--- !u!4 &1160976644
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160976642}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.91431177, y: 0.1307781, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1618126124
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,3 +817,4 @@ SceneRoots:
   - {fileID: 428419047}
   - {fileID: 1943164896}
   - {fileID: 117050845}
+  - {fileID: 1160976644}

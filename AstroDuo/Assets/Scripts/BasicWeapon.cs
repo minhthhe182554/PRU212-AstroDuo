@@ -62,6 +62,12 @@ public class BasicWeapon : IWeapon
             rb.linearVelocity = direction * bulletSpeed;
         }
         
+        // PLAY SOUND
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBasicBulletSound();
+        }
+        
         // Update fire timing
         lastFireTime = Time.time;
         
